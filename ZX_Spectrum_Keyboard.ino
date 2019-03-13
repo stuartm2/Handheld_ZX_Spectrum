@@ -10,6 +10,8 @@ const int COL_PINS[] = {10, 16, 14, 15, A0, A1};
 const int ROW_PINS[] = {2, 3, 4, 5, 6, 7, 8, 9};
 const int CAP_PIN = A2;
 const int SYM_PIN = A3;
+const int SPEC_LED = 0;
+const int MOUSE_LED = 1;
 
 const int ENT = KEY_RETURN,
           CAP = KEY_LEFT_SHIFT,
@@ -41,6 +43,8 @@ bool mousePressed[2] = {0, 0};
 void setup() {
   pinMode(SYM_PIN, INPUT_PULLUP);
   pinMode(CAP_PIN, INPUT_PULLUP);
+  pinMode(MOUSE_LED, OUTPUT);
+  pinMode(SPEC_LED, OUTPUT);
 
   for (int i = 0; i < NUM_KEYS; i++) {
     keysDown[i] = 0;
@@ -173,6 +177,7 @@ bool detectModKeys(int pin, char key, bool prevState) {
 void enterMouseMode() {
   Mouse.begin();
   isMouse = true;
+  digitalWrite(MOUSE_LED, HIGH);
   doJoggle(HORIZONTAL);
 }
 
@@ -189,6 +194,7 @@ void exitMouseMode() {
 
   Mouse.end();
   isMouse = false;
+  digitalWrite(MOUSE_LED, LOW);
   doJoggle(VERTICAL);
 }
 
@@ -206,6 +212,7 @@ void doJoggle(int dir) {
 
 void toggleSpecialMode() {
   isSpecial = !isSpecial;
+  digitalWrite(SPEC_LED, isSpecial);
 
   if (isSpecial) {
     Keyboard.release(CAP);
