@@ -6,6 +6,7 @@
 #define NUM_KEYS 50
 #define HORIZONTAL 0
 #define VERTICAL 1
+#define MODE_SWITCH_DELAY 500
 
 const int COL_PINS[] = {10, 16, 14, 15, A0, A1};
 const int ROW_PINS[] = {2, 3, 4, 5, 6, 7, 8, 9};
@@ -15,7 +16,6 @@ const int JOY_LED = 0;
 const int MOUSE_LED = 1;
 
 const int ENT = KEY_RETURN,
-          ESC = KEY_ESC,
           F_1 = KEY_F1,
           D_U = KEY_UP_ARROW,
           D_R = KEY_RIGHT_ARROW,
@@ -25,14 +25,13 @@ const int ENT = KEY_RETURN,
           SYM = KEY_LEFT_CTRL;
 
 char keyMap[NUM_KEYS] = {
-  0x0, F_1, ENT, ESC, D_U, D_R, D_D, D_L, 0x0, 0x0, // 0-9
+  0x0, 0x0, ENT, F_1, D_U, D_R, D_D, D_L, 0x0, 0x0, // 0-9
   '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', // 10-19
   'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', // 20-29
   'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ENT, // 30-39
   CAP, 'z', 'x', 'c', 'v', 'b', 'n', 'm', SYM, ' '  // 40-49
 };
 
-long f1PressedAt = 0;
 int keysDown[NUM_KEYS];
 bool symWasPressed = false;
 bool capWasPressed = false;
@@ -96,11 +95,13 @@ void doTopKeys() {
         digitalWrite(COL_PINS[0], HIGH);
         releaseAllKeys();
         enterMouseMode();
+        delay(MODE_SWITCH_DELAY);
         return;
       } else if (i == 2 && capWasPressed) {
         digitalWrite(COL_PINS[0], HIGH);
         releaseAllKeys();
         enterJoystickMode();
+        delay(MODE_SWITCH_DELAY);
         return;
       } else if (keysDown[i] == 0 && c != 0x0) {
         Keyboard.press(c);
@@ -148,11 +149,13 @@ void doJoystick() {
         releaseAllKeys();
         exitJoystickMode();
         enterMouseMode();
+        delay(MODE_SWITCH_DELAY);
         return;
       } else if (btn == 2 && capWasPressed) {
         digitalWrite(COL_PINS[0], HIGH);
         releaseAllKeys();
         exitJoystickMode();
+        delay(MODE_SWITCH_DELAY);
         return;
       }
 
@@ -211,12 +214,14 @@ void doMouse() {
         digitalWrite(COL_PINS[0], HIGH);
         releaseAllKeys();
         exitMouseMode();
+        delay(MODE_SWITCH_DELAY);
         return;
       } else if (btn == 2 && capWasPressed) {
         digitalWrite(COL_PINS[0], HIGH);
         releaseAllKeys();
         exitMouseMode();
         enterJoystickMode();
+        delay(MODE_SWITCH_DELAY);
         return;
       }
 
@@ -265,7 +270,6 @@ void enterJoystickMode() {
   Joystick.setYAxisRange(-1, 1);
   isJoystick = true;
   digitalWrite(JOY_LED, HIGH);
-  delay(250);
 }
 
 void exitJoystickMode() {
@@ -276,14 +280,12 @@ void exitJoystickMode() {
   Joystick.end();
   isJoystick = false;
   digitalWrite(JOY_LED, LOW);
-  delay(250);
 }
 
 void enterMouseMode() {
   Mouse.begin();
   isMouse = true;
   digitalWrite(MOUSE_LED, HIGH);
-  delay(250);
 }
 
 void exitMouseMode() {
@@ -300,7 +302,6 @@ void exitMouseMode() {
   Mouse.end();
   isMouse = false;
   digitalWrite(MOUSE_LED, LOW);
-  delay(250);
 }
 
 void releaseAllKeys() {
