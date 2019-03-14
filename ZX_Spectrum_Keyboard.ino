@@ -25,7 +25,7 @@ const int ENT = KEY_RETURN,
           SYM = KEY_LEFT_CTRL;
 
 char keyMap[NUM_KEYS] = {
-  F_1, ESC, ENT, D_U, D_R, D_D, D_L, 0x0, 0x0, 0x0, // 0-9
+  0x0, F_1, ENT, ESC, D_U, D_R, D_D, D_L, 0x0, 0x0, // 0-9
   '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', // 10-19
   'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', // 20-29
   'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ENT, // 30-39
@@ -79,12 +79,44 @@ void loop() {
   } else if (isJoystick) {
     doJoystick();
   } else {
-    doKeys();
+    doTopKeys();
   }
+
+  doKeys();
+}
+
+void doTopKeys() {
+  digitalWrite(COL_PINS[0], LOW);
+
+  for (int i = 0; i < 8; i++) {
+    char c = keyMap[i];
+
+    if (digitalRead(ROW_PINS[i]) == LOW) {
+      if (i == 2 && symWasPressed) {
+        digitalWrite(COL_PINS[0], HIGH);
+        releaseAllKeys();
+        enterMouseMode();
+        return;
+      } else if (i == 2 && capWasPressed) {
+        digitalWrite(COL_PINS[0], HIGH);
+        releaseAllKeys();
+        enterJoystickMode();
+        return;
+      } else if (keysDown[i] == 0 && c != 0x0) {
+        Keyboard.press(c);
+        keysDown[i] = 1;
+      }
+    } else if (keysDown[i] == 1) {
+      Keyboard.release(c);
+      keysDown[i] = 0;
+    }
+  }
+
+  digitalWrite(COL_PINS[0], HIGH);
 }
 
 void doKeys() {
-  for (int col = 0; col < 6; col++) {
+  for (int col = 1; col < 6; col++) {
     digitalWrite(COL_PINS[col], LOW);
 
     for (int row = 0; row < 8; row++) {
@@ -92,17 +124,7 @@ void doKeys() {
       char c = keyMap[i];
 
       if (digitalRead(ROW_PINS[row]) == LOW) {
-        if (i == 1 && symWasPressed) {
-          digitalWrite(COL_PINS[col], HIGH);
-          releaseAllKeys();
-          enterMouseMode();
-          return;
-        } else if (i == 1 && capWasPressed) {
-          digitalWrite(COL_PINS[col], HIGH);
-          releaseAllKeys();
-          enterJoystickMode();
-          return;
-        } else if (keysDown[i] == 0 && c != 0x0) {
+        if (keysDown[i] == 0 && c != 0x0) {
           Keyboard.press(c);
           keysDown[i] = 1;
         }
