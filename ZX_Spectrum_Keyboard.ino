@@ -143,11 +143,20 @@ void doJoystick() {
 
   for (int btn = 0; btn < 8; btn++) {
     if (digitalRead(ROW_PINS[btn]) == LOW) {
-      if (capWasPressed && btn == 2) { // Exit joystick mode
+      if (btn == 2 && symWasPressed) {
         digitalWrite(COL_PINS[0], HIGH);
+        releaseAllKeys();
+        exitJoystickMode();
+        enterMouseMode();
+        return;
+      } else if (btn == 2 && capWasPressed) {
+        digitalWrite(COL_PINS[0], HIGH);
+        releaseAllKeys();
         exitJoystickMode();
         return;
-      } else if (btn == 2 && !joyPressed[btn]) { // Large fire
+      }
+
+      if (btn == 2 && !joyPressed[btn]) { // Large fire
         joyPressed[btn] = 1;
         Joystick.setButton(0, true);
       } else if (btn == 3 && !joyPressed[btn]) { // Small fire
@@ -198,11 +207,20 @@ void doMouse() {
 
   for (int btn; btn < 8; btn++) {
     if (digitalRead(ROW_PINS[btn]) == LOW) {
-      if (symWasPressed && (btn == 2 || btn == 3)) { // Exit mouse mode
+      if (btn == 2 && symWasPressed) {
         digitalWrite(COL_PINS[0], HIGH);
+        releaseAllKeys();
         exitMouseMode();
         return;
-      } else if (btn == 4) { // Up
+      } else if (btn == 2 && capWasPressed) {
+        digitalWrite(COL_PINS[0], HIGH);
+        releaseAllKeys();
+        exitMouseMode();
+        enterJoystickMode();
+        return;
+      }
+
+      if (btn == 4) { // Up
         Mouse.move(0, -1, 0);
       } else if (btn == 5) { // Right
         Mouse.move(1, 0, 0);
@@ -247,7 +265,7 @@ void enterJoystickMode() {
   Joystick.setYAxisRange(-1, 1);
   isJoystick = true;
   digitalWrite(JOY_LED, HIGH);
-  delay(500);
+  delay(250);
 }
 
 void exitJoystickMode() {
@@ -258,13 +276,14 @@ void exitJoystickMode() {
   Joystick.end();
   isJoystick = false;
   digitalWrite(JOY_LED, LOW);
-  delay(500);
+  delay(250);
 }
 
 void enterMouseMode() {
   Mouse.begin();
   isMouse = true;
   digitalWrite(MOUSE_LED, HIGH);
+  delay(250);
 }
 
 void exitMouseMode() {
@@ -281,6 +300,7 @@ void exitMouseMode() {
   Mouse.end();
   isMouse = false;
   digitalWrite(MOUSE_LED, LOW);
+  delay(250);
 }
 
 void releaseAllKeys() {
