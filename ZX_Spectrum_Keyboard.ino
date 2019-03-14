@@ -265,7 +265,6 @@ void enterMouseMode() {
   Mouse.begin();
   isMouse = true;
   digitalWrite(MOUSE_LED, HIGH);
-  doJoggle(HORIZONTAL);
 }
 
 void exitMouseMode() {
@@ -282,19 +281,6 @@ void exitMouseMode() {
   Mouse.end();
   isMouse = false;
   digitalWrite(MOUSE_LED, LOW);
-  doJoggle(VERTICAL);
-}
-
-void doJoggle(int dir) {
-  int x = (dir == HORIZONTAL);
-  int y = (dir == VERTICAL);
-
-  for (int i = 0; i < 5; i++) {
-    Mouse.move(x * 5, y * 5, 0);
-    delay(50);
-    Mouse.move(x * -5, y * -5, 0);
-    delay(50);
-  }
 }
 
 void releaseAllKeys() {
