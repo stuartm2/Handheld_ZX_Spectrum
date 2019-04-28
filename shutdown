@@ -1,0 +1,15 @@
+#!/bin/bash
+
+echo "3" > /sys/class/gpio/export
+echo "in" > /sys/class/gpio/gpio3/direction
+
+while true
+do
+  RES=`cat /sys/class/gpio/gpio3/value`
+  if [ $RES == '0' ]
+  then
+    shutdown -h now
+  fi
+  sleep 0.5
+
+done
