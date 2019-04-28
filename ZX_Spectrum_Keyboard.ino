@@ -17,6 +17,7 @@ const int MOUSE_LED = 1;
 
 const int ENT = KEY_RETURN,
           F_1 = KEY_F1,
+          ESC = KEY_ESC,
           D_U = KEY_UP_ARROW,
           D_R = KEY_RIGHT_ARROW,
           D_D = KEY_DOWN_ARROW,
@@ -25,7 +26,7 @@ const int ENT = KEY_RETURN,
           SYM = KEY_LEFT_CTRL;
 
 char keyMap[NUM_KEYS] = {
-  0x0, 0x0, ENT, F_1, D_U, D_R, D_D, D_L, 0x0, 0x0, // 0-9
+  0x0, F_1, ENT, ESC, D_U, D_R, D_D, D_L, 0x0, 0x0, // 0-9
   '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', // 10-19
   'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', // 20-29
   'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ENT, // 30-39
